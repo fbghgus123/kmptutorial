@@ -5,24 +5,30 @@ import com.example.kmpfirst.todo.data.repository.TodoRepositoryImpl
 import com.example.kmpfirst.todo.domain.repository.TodoRepository
 import com.example.kmpfirst.todo.domain.usecase.*
 import com.example.kmpfirst.todo.presentation.TodoViewModel
+import org.koin.dsl.module
 
-object TodoModule {
-    private val dataSource by lazy { TodoDataSource() }
-    private val repository: TodoRepository by lazy { TodoRepositoryImpl(dataSource) }
+val todoModule = module {
+    // Data Source
+    single { TodoDataSource() }
     
-    private val getTodosUseCase by lazy { GetTodosUseCase(repository) }
-    private val addTodoUseCase by lazy { AddTodoUseCase(repository) }
-    private val updateTodoUseCase by lazy { UpdateTodoUseCase(repository) }
-    private val deleteTodoUseCase by lazy { DeleteTodoUseCase(repository) }
-    private val toggleTodoUseCase by lazy { ToggleTodoUseCase(repository) }
+    // Repository
+    single<TodoRepository> { TodoRepositoryImpl(get()) }
     
-    fun provideTodoViewModel(): TodoViewModel {
-        return TodoViewModel(
-            getTodosUseCase = getTodosUseCase,
-            addTodoUseCase = addTodoUseCase,
-            updateTodoUseCase = updateTodoUseCase,
-            deleteTodoUseCase = deleteTodoUseCase,
-            toggleTodoUseCase = toggleTodoUseCase
+    // Use Cases
+    factory { GetTodosUseCase(get()) }
+    factory { AddTodoUseCase(get()) }
+    factory { UpdateTodoUseCase(get()) }
+    factory { DeleteTodoUseCase(get()) }
+    factory { ToggleTodoUseCase(get()) }
+    
+    // ViewModel
+    factory { 
+        TodoViewModel(
+            getTodosUseCase = get(),
+            addTodoUseCase = get(),
+            updateTodoUseCase = get(),
+            deleteTodoUseCase = get(),
+            toggleTodoUseCase = get()
         )
     }
 }
