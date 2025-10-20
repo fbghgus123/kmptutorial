@@ -43,6 +43,9 @@ kotlin {
             // Koin
             implementation("io.insert-koin:koin-core:3.5.6")
             implementation("io.insert-koin:koin-compose:1.1.5")
+            
+            // DateTime (KMP 호환)
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

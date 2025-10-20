@@ -26,7 +26,10 @@ import com.example.kmpfirst.todo.presentation.filteredTodos
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoScreen(viewModel: TodoViewModel) {
+fun TodoScreen(
+    viewModel: TodoViewModel,
+    onTodoClick: (String) -> Unit = {}
+) {
     val uiState by viewModel.uiState.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     
@@ -72,7 +75,8 @@ fun TodoScreen(viewModel: TodoViewModel) {
             TodoList(
                 uiState = uiState,
                 onToggle = { viewModel.toggleTodo(it) },
-                onDelete = { viewModel.deleteTodo(it) }
+                onDelete = { viewModel.deleteTodo(it) },
+                onTodoClick = onTodoClick
             )
         }
     }
@@ -131,7 +135,8 @@ fun TodoFilterChips(
 fun TodoList(
     uiState: TodoUiState,
     onToggle: (String) -> Unit,
-    onDelete: (String) -> Unit
+    onDelete: (String) -> Unit,
+    onTodoClick: (String) -> Unit = {}
 ) {
     if (uiState.filteredTodos.isEmpty()) {
         EmptyState(filter = uiState.filter)
@@ -148,7 +153,8 @@ fun TodoList(
                 TodoItem(
                     todo = todo,
                     onToggle = { onToggle(todo.id) },
-                    onDelete = { onDelete(todo.id) }
+                    onDelete = { onDelete(todo.id) },
+                    onClick = { onTodoClick(todo.id) }
                 )
             }
         }
@@ -190,7 +196,8 @@ fun EmptyState(filter: TodoFilter) {
 fun TodoItem(
     todo: com.example.kmpfirst.todo.domain.model.Todo,
     onToggle: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onClick: () -> Unit = {}
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
     
@@ -205,7 +212,8 @@ fun TodoItem(
             else
                 MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier
